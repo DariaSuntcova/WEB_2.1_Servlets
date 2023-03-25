@@ -11,6 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 public class MainServlet extends HttpServlet {
     private PostController controller;
 
+    private static final String GET = "GET";
+    private static final String POST = "POST";
+    private static final String DELETE = "DELETE";
+    private static final String PATH_API_POST = "/api/posts";
+    private static final String SLASH = "/";
+
     @Override
     public void init() {
         final var repository = new PostRepository();
@@ -26,20 +32,20 @@ public class MainServlet extends HttpServlet {
             final var method = req.getMethod();
 
             // primitive routing
-            if (method.equals("GET") && path.equals("/api/posts")) {
+            if (method.equals(GET) && path.equals(PATH_API_POST)) {
                 controller.all(resp);
                 return;
             }
-            if (method.equals("GET") && path.matches("/api/posts/\\d+")) {
+            if (method.equals(GET) && path.matches(PATH_API_POST + "\\d+")) {
                 // easy way
                 controller.getById(parseID(path), resp);
                 return;
             }
-            if (method.equals("POST") && path.equals("/api/posts")) {
+            if (method.equals(POST) && path.equals(PATH_API_POST)) {
                 controller.save(req.getReader(), resp);
                 return;
             }
-            if (method.equals("DELETE") && path.matches("/api/posts/\\d+")) {
+            if (method.equals(DELETE) && path.matches(PATH_API_POST + "\\d+")) {
                 // easy way
                 controller.removeById(parseID(path), resp);
                 return;
@@ -52,7 +58,7 @@ public class MainServlet extends HttpServlet {
     }
 
     private long parseID(String path) {
-        return Long.parseLong(path.substring(path.lastIndexOf("/")));
+        return Long.parseLong(path.substring(path.lastIndexOf(SLASH)));
     }
 }
 
